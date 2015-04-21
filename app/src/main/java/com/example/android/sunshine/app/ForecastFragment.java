@@ -185,9 +185,6 @@ public class ForecastFragment extends android.support.v4.app.Fragment {
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
             return resultStrs;
 
         }
@@ -221,8 +218,6 @@ public class ForecastFragment extends android.support.v4.app.Fragment {
 
                 URL url = new URL(builtUri.toString());
 
-                Log.v(LOG_TAG, "Built Uri: " + builtUri.toString());
-
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -245,7 +240,6 @@ public class ForecastFragment extends android.support.v4.app.Fragment {
                     return null;
                 }
                 jsonForecastStr = buffer.toString();
-                Log.v(LOG_TAG, "Forecast JSON String: " + jsonForecastStr);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error", e);
             } finally {
