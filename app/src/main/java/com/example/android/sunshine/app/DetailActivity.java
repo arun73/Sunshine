@@ -101,7 +101,7 @@ public class DetailActivity extends ActionBarActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT,
-                    mForecastStr + FORECAST_SHARE_HASHTAG);
+                    mForecastStr + " " + FORECAST_SHARE_HASHTAG);
             return intent;
         }
     }
