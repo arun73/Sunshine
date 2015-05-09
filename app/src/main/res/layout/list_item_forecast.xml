@@ -2,9 +2,9 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:id="@+id/list_item_forecast_textview"
-    android:text="test text"
     android:textSize="15sp"
     android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     android:paddingTop="25dp"
     android:paddingBottom="25dp"
     android:textColor="#ff000000">
