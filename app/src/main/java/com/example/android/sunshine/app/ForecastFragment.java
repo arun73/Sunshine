@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -76,7 +78,7 @@ public class ForecastFragment extends android.support.v4.app.Fragment {
 
         List<String> weekForecast = new ArrayList<>(Arrays.asList(forecastArray));
 
-        mForecastAdapter = new ArrayAdapter<String>(
+        mForecastAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
@@ -84,6 +86,15 @@ public class ForecastFragment extends android.support.v4.app.Fragment {
         );
 
         mForecastListView.setAdapter(mForecastAdapter);
+        mForecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String forecastString = mForecastAdapter.getItem(i);
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, forecastString);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -254,14 +265,14 @@ public class ForecastFragment extends android.support.v4.app.Fragment {
                     }
                 }
             }
-            String[] forecaseData = null;
+            String[] forecastData = null;
             try {
-                forecaseData = getWeatherDataFromJson(jsonForecastStr, numDays);
+                forecastData = getWeatherDataFromJson(jsonForecastStr, numDays);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
-            return forecaseData;
+            return forecastData;
         }
 
         @Override
