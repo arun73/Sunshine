@@ -11,32 +11,49 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private static String mLocation;
-    private static final String FORECASEFRAGMENT_TAG = "forecast";
+    private boolean mTwoPane;
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mLocation = Utility.getPreferredLocation(this);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment(), FORECASEFRAGMENT_TAG)
-                    .commit();
+
+        if (findViewById(R.id.weather_detail_container) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+            getSupportActionBar().setElevation(0f);
         }
+
+        ForecastFragment forecastFragment = (ForecastFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_forecast);
+        forecastFragment.setUseTodayLayout(!mTwoPane);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         String curLocation = Utility.getPreferredLocation(this);
-        if (!mLocation.equals(curLocation)) {
-            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASEFRAGMENT_TAG);
+        if (mLocation != null && !mLocation.equals(curLocation)) {
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.fragment_forecast);
             ff.onLocationChanged();
+
+            DetailFragment df = (DetailFragment) getSupportFragmentManager()
+                    .findFragmentByTag(DETAILFRAGMENT_TAG);
+            df.onLocationChanged(curLocation);
+
             mLocation = curLocation;
         }
     }
@@ -79,9 +96,29 @@ public class MainActivity extends ActionBarActivity {
         intent.setData(geoLocation);
 
         if (intent.resolveActivity(getPackageManager()) != null) {
+            Log.d(LOG_TAG, "Opening preferred location in map");
             startActivity(intent);
         } else {
             Log.d(LOG_TAG, "No activity registered to launch ACTION_VIEW intent");
+        }
+    }
+
+    @Override
+    public void onItemSelected(Uri dateUri) {
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putParcelable(DetailFragment.DETAIL_URI, dateUri);
+
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(args);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
+                    .commit();
+        } else {
+            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+            intent.setData(dateUri);
+            startActivity(intent);
         }
     }
 }
